@@ -1,17 +1,53 @@
-# LogiCheck Lens - Browser Extension
+# LogiCheck Lens - Browser Extension & Web App
 
 Your conversational AI coach for sharpening logical reasoning in an era of mass information.
 
 ## 🚀 Quick Start Guide
 
-### 1. Get Your Google AI API Key
+### For Web Application
+
+#### 1. Install Dependencies
+
+```bash
+# Install all dependencies (root, server, and client)
+npm run install:all
+```
+
+#### 2. Run the Application
+
+Open 2 terminal windows:
+
+```bash
+# Terminal 1 - Start backend server
+npm run dev:server
+
+# Terminal 2 - Start frontend client
+npm run dev:client
+```
+
+The web app will be available at `http://localhost:5173`
+
+#### 3. Configure Your API Key (First Time)
+
+1. Open the web app in your browser
+2. Click **Settings** in the navigation menu
+3. Get your Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
+4. Paste the API key in the Settings page
+5. Click **Test Key** to verify it works
+6. Click **Save API Key**
+
+**🔐 Security:** Your API key is stored **locally** in your browser's localStorage and is **never** sent to our servers. It goes directly from your browser to Google's Gemini API.
+
+### For Chrome Extension
+
+#### 1. Get Your Google AI API Key
 
 1. Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
 2. Sign in with your Google account
 3. Click **"Create API Key"** or **"Get API Key"**
-4. Copy the generated API key (you'll need this in step 3)
+4. Copy the generated API key
 
-### 2. Load the Extension in Chrome
+#### 2. Load the Extension in Chrome
 
 1. Open Chrome browser
 2. Navigate to `chrome://extensions/`
@@ -20,7 +56,7 @@ Your conversational AI coach for sharpening logical reasoning in an era of mass 
 5. Select the `extension` folder inside the LogiCheck project directory
 6. The LogiCheck extension should now appear in your extensions list
 
-### 3. Configure Your API Key
+#### 3. Configure Your API Key
 
 **IMPORTANT:** You must configure your API key before using the extension!
 
@@ -37,29 +73,7 @@ Your conversational AI coach for sharpening logical reasoning in an era of mass 
 - It is **never uploaded** to any server
 - Each user must configure their own API key
 
-### 4. Start Using LogiCheckser Extension
-
-Your conversational AI coach for sharpening logical reasoning in an era of mass information.
-
-## 🚀 Quick Start Guide
-
-### 1. Get Your Google AI API Key
-
-1. Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
-2. Sign in with your Google account
-3. Click **"Create API Key"** or **"Get API Key"**
-4. Copy the generated API key (you'll need this in step 3)
-
-### 2. Load the Extension in Chrome
-
-1. Open Chrome browser
-2. Navigate to `chrome://extensions/`
-3. Enable **"Developer mode"** (toggle in the top-right corner)
-4. Click **"Load unpacked"**
-5. Select the `extension` folder inside the LogiCheck project directory
-6. The extension should now appear in your extensions list
-
-### 4. Start Using LogiCheck
+#### 4. Start Using LogiCheck
 
 1. Open any webpage with text (e.g., Wikipedia, news article, blog)
 2. Highlight/select a paragraph or section of text

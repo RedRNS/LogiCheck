@@ -1,7 +1,10 @@
 # LogiCheck - Git Ignore File
 
-# Environment variables
+# Environment variables (DEPRECATED - no longer used)
+# API keys are now configured via extension Options page
 .env
+.env.local
+.env.*.local
 
 # Dependencies
 node_modules/

@@ -1,49 +1,43 @@
-# LogiCheck Lens - Browser Extension
+# LogiCheck L### 2. Load the Extension in Chrome
+
+1. Open Chrome browser
+2. Navigate to `chrome://extensions/`
+3. Enable **"Developer mode"** (toggle in the top-right corner)
+4. Click **"Load unpacked"**
+5. Select the `extension` folder inside the LogiCheck project directory
+6. The LogiCheck extension should now appear in your extensions list
+
+### 3. Configure Your API Key
+
+**IMPORTANT:** You must configure your API key before using the extension!
+
+1. Right-click the LogiCheck extension icon in Chrome toolbar
+2. Select **"Options"** from the menu
+3. Paste your Gemini API key in the input field
+4. Click **"Save API Key"**
+5. (Optional) Click **"Test key"** to verify it works
+   - ✅ Success: "Key test succeeded (valid and reachable)"
+   - ❌ Error: Check your API key and try again
+
+**🔐 Security Note:**
+- Your API key is stored **locally** in your browser only
+- It is **never uploaded** to any server
+- Each user must configure their own API key
+
+### 4. Start Using LogiCheckser Extension
 
 Your conversational AI coach for sharpening logical reasoning in an era of mass information.
 
-## 🚀 Setup Instructions
+## 🚀 Quick Start Guide
 
-### 1. Install Dependencies
-
-1. Make sure you have [Node.js](https://nodejs.org/) installed
-2. Open terminal in the project directory
-3. Run:
-   ```bash
-   npm install
-   ```
-
-### 2. Get Your Google AI API Key
+### 1. Get Your Google AI API Key
 
 1. Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
 2. Sign in with your Google account
-3. Click **"Create API Key"**
-4. Copy the generated API key
+3. Click **"Create API Key"** or **"Get API Key"**
+4. Copy the generated API key (you'll need this in step 3)
 
-### 3. Configure Environment Variables
-
-1. In the project root, you'll find a file named `.env.example`
-2. Create a copy of this file and rename it to `.env`:
-   ```bash
-   cp .env.example .env
-   ```
-   Or on Windows:
-   ```bash
-   copy .env.example .env
-   ```
-3. Open the `.env` file in your code editor
-4. Replace the placeholder with your actual API key:
-   ```
-   GEMINI_API_KEY="your-actual-api-key-here"
-   ```
-5. Save the file
-
-**⚠️ IMPORTANT SECURITY NOTE:**
-- **NEVER** commit the `.env` file to version control
-- The `.env` file is already listed in `.gitignore` to prevent accidental commits
-- Only share `.env.example` with your team, not `.env`
-
-### 4. Load the Extension in Chrome
+### 2. Load the Extension in Chrome
 
 1. Open Chrome browser
 2. Navigate to `chrome://extensions/`
@@ -52,15 +46,20 @@ Your conversational AI coach for sharpening logical reasoning in an era of mass 
 5. Select the `extension` folder inside the LogiCheck project directory
 6. The extension should now appear in your extensions list
 
-### 5. Test the Extension
+### 4. Start Using LogiCheck
 
-1. Open any webpage with text (e.g., Wikipedia, news article)
+1. Open any webpage with text (e.g., Wikipedia, news article, blog)
 2. Highlight/select a paragraph or section of text
-3. **Method 1**: Right-click and select **"Analyze with LogiCheck"**
-4. **Method 2**: Press `Ctrl+Shift+L` (Windows/Linux) or `Cmd+Shift+L` (Mac)
-5. A sidebar will appear from the right showing:
-   - Loading animation while analyzing
-   - Analysis results with main claim, assumptions, fallacies, and Socratic questions
+3. Analyze the text using one of these methods:
+   - **Method 1**: Right-click → **"Analyze with LogiCheck"**
+   - **Method 2**: Keyboard shortcut: `Ctrl+Shift+L` (Windows/Linux) or `Cmd+Shift+L` (Mac)
+4. A sidebar will appear from the right showing:
+   - ⏳ Loading animation while analyzing (max 30 seconds)
+   - 📊 Analysis results:
+     - Main claim
+     - Underlying assumptions
+     - Logical fallacies (if any)
+     - Socratic question for deeper thinking
 
 ## 📁 Project Structure
 
@@ -69,23 +68,22 @@ LogiCheck/
 ├── extension/                    # Chrome Extension Files
 │   ├── manifest.json            # Extension configuration
 │   ├── background.js            # Service worker (handles API calls)
-│   └── content.js               # Content script (injects sidebar UI)
-├── config/                       # Configuration Files
-│   └── config.js                # Loads environment variables
+│   ├── content.js               # Content script (injects sidebar UI)
+│   ├── config.js                # Runtime API key loader
+│   ├── options.html             # Options page for API key configuration
+│   ├── options.js               # Options page logic
+│   └── options.css              # Options page styling
 ├── docs/                         # Documentation
 │   ├── ARCHITECTURE.md          # System architecture documentation
 │   ├── IMPLEMENTATION_SUMMARY.md # Implementation details
 │   └── TROUBLESHOOTING.md       # Troubleshooting guide
-├── src/                          # React Source (for future use)
+├── src/                          # React Source (future use)
 │   ├── App.js                   # React component
 │   ├── App.css                  # Styles
 │   └── index.js                 # React entry point
-├── .env                          # Environment variables (API keys) - NOT committed
-├── .env.example                  # Template for environment variables
 ├── .gitignore                    # Git ignore rules
 ├── package.json                  # Node.js dependencies
 ├── package-lock.json             # Dependency lock file
-├── node_modules/                 # Installed packages
 └── README.md                     # This file
 ```
 
@@ -93,23 +91,35 @@ LogiCheck/
 
 - ✅ Context menu integration ("Analyze with LogiCheck")
 - ✅ Keyboard shortcut (Ctrl+Shift+L / Cmd+Shift+L)
-- ✅ AI-powered logical analysis using Google's Gemini 2.5 Pro model
+- ✅ AI-powered logical analysis using Google's Gemini 2.5 Flash model
 - ✅ Beautiful, non-intrusive sidebar UI
-- ✅ Identifies logical fallacies
-- ✅ Extracts main claims and assumptions
-- ✅ Provides Socratic questions for deeper thinking
+- ✅ Identifies logical fallacies with explanations
+- ✅ Extracts main claims and underlying assumptions
+- ✅ Provides Socratic questions for deeper critical thinking
+- ✅ 30-second timeout protection (no infinite loading)
+- ✅ User-friendly error messages in Indonesian
+- ✅ Secure API key storage (local browser storage only)
+- ✅ Easy API key configuration via Options page
 
 ## 🤖 AI Model Information
 
-This extension uses **Google's Gemini 2.5 Pro** model for fast and efficient analysis. 
+This extension uses **Google's Gemini 2.5 Flash** model for fast, efficient, and cost-effective analysis. 
 
-**Model**: `gemini-2.5-Pro`
-**API Version**: v1
-**Endpoint**: `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-Pro:generateContent`
+**Current Model**: `gemini-2.5-flash`
+**API Version**: `v1beta`
+**Endpoint**: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`
 
-Alternative models you can use (edit `extension/background.js`):
-- `gemini-1.5-pro` - More powerful but slower
-- `gemini-2.0-flash-exp` - Experimental latest version
+**Why Gemini 2.5 Flash?**
+- ⚡ Fast response time (typically 3-10 seconds)
+- 💰 Best price-performance ratio
+- 🎯 Optimized for thinking and reasoning tasks
+- ✅ Free tier available with generous quota
+
+**Other Available Models** (can be changed in `extension/background.js`):
+- `gemini-2.5-pro` - State-of-the-art, more powerful (slower, more expensive)
+- `gemini-2.5-flash-lite` - Fastest and most cost-efficient
+- `gemini-1.5-flash` - Previous generation (still good)
+- `gemini-1.5-pro` - Previous generation pro model
 
 ## 🔧 Troubleshooting
 
@@ -117,68 +127,84 @@ Alternative models you can use (edit `extension/background.js`):
 
 ### Extension doesn't appear
 - Make sure Developer mode is enabled in `chrome://extensions/`
-- Make sure you selected the `extension` folder (not the root LogiCheck folder) when loading unpacked
+- Make sure you selected the `extension` folder (not the root LogiCheck folder)
+- Click the reload button on the extension if you made any changes
 
-### Sidebar doesn't show when clicking "Analyze with LogiCheck"
-- Check the browser console for errors (F12 → Console tab)
-- Verify your API key is correctly set in the `.env` file
-- Make sure you have an active internet connection
-- Check the background service worker console for "Gemini API Key loaded: Successfully" message
+### "API key belum dikonfigurasi" error
+- You haven't set your API key yet!
+- Right-click extension icon → **Options**
+- Paste your Gemini API key and click **Save**
 
-### How to provide the GEMINI_API_KEY to the extension at runtime
+### "API key tidak valid" error (401)
+- Your API key is incorrect or expired
+- Get a new API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
+- Update it in extension Options
 
-Important: Browser extensions cannot read your local `.env` file at runtime. The `.env` file is useful for development scripts and local Node tools, but the extension service worker runs inside Chrome and needs the key available via the extension runtime storage.
+### "Request timeout" error
+- API took too long to respond (>30 seconds)
+- Try with a shorter text selection
+- Check your internet connection
+- Wait a moment and try again
 
-Quick dev method (temporarily set the key):
+### "Terlalu banyak request" error (429)
+- You've hit the rate limit (free tier: ~15 requests/minute)
+- Wait 1-2 minutes before trying again
+- Consider upgrading your API quota if needed
 
-1. Open DevTools for the extension's background service worker (chrome://extensions → find LogiCheck → Service worker → "background page" → Inspect).
-2. In the Console, run the following to set your key (replace with the real key):
-
-```javascript
-chrome.runtime.sendMessage({ action: 'setApiKey', key: 'PASTE_YOUR_REAL_GEMINI_KEY_HERE' }, (resp) => console.log(resp));
-```
-
-3. After that, the background worker will store the key in `chrome.storage.local` and use it for API calls. This is intended for development; for production consider adding an options page so users can securely input their key.
-
-Note: If you prefer a persistent developer setup, you can programmatically write `chrome.storage.local` entries via an options page or small script injected into the background worker during development.
+### Sidebar doesn't show
+- Make sure you selected text on the page first
+- Check browser console (F12) for error messages
+- Try reloading the webpage
+- Verify extension is enabled in `chrome://extensions/`
 
 ### Analysis fails or shows error
-- **Most Common**: Update model name to `gemini-1.5-flash` in `extension/background.js`
-- Verify your Google AI API key is valid and correctly set in `.env`
-- Check if you have API quota remaining
-- Try with a shorter text selection
-
-### API Key Issues
-- Make sure the `.env` file exists in the project root
-- Verify there are no extra spaces in the API key
-- The key should be wrapped in quotes: `GEMINI_API_KEY="your-api-key-here"`
-- Visit Google AI Studio to verify your key is active
-- Check the terminal/console for the message "Gemini API Key loaded: Successfully"
+- Check the error message in the sidebar (now in Indonesian with details)
+- Click "Detail Error Teknis" dropdown for technical info
+- Open browser console (F12) for more debugging info
+- Verify your API key is valid using the "Test key" button in Options
 
 ## 📝 Usage Tips
 
-1. **Select meaningful text**: Choose paragraphs with clear arguments
-2. **Wait for analysis**: The AI needs a few seconds to process
-3. **Review carefully**: The AI provides guidance, but critical thinking is yours
-4. **Try different texts**: News articles, opinion pieces, and academic texts work well
+1. **Select meaningful text**: Choose paragraphs with clear arguments or claims
+2. **Optimal text length**: 50-500 words works best (too short = not enough context, too long = slower)
+3. **Wait for analysis**: Typically takes 3-10 seconds, max 30 seconds
+4. **Review carefully**: AI provides guidance, but **your** critical thinking is essential
+5. **Try different texts**: News articles, opinion pieces, academic papers, and blog posts work well
+6. **Use Socratic questions**: Let the AI's questions guide your deeper analysis
 
 ## 🔐 Privacy & Security
 
-- All API calls go directly from your browser to Google AI
-- No data is stored on external servers
-- Selected text is only sent to Google AI for analysis
-- Your API key is stored securely in the `.env` file (never committed to Git)
-- The `.env` file is automatically excluded from version control via `.gitignore`
-- Environment variables are loaded using the `dotenv` package for secure configuration management
+- ✅ All API calls go **directly** from your browser to Google AI
+- ✅ **No intermediary servers** - no data stored anywhere except Google AI
+- ✅ Selected text is **only** sent to Google AI for analysis
+- ✅ Your API key is stored **securely in browser local storage** (`chrome.storage.local`)
+- ✅ API key is **never uploaded** to any external server
+- ✅ Each user must configure their own API key (not shared)
+- ✅ No tracking, no analytics, no data collection
+- ⚠️ Standard Google AI [privacy policy](https://ai.google.dev/gemini-api/terms) applies to API requests
 
 ## 🛠️ Development
 
 This extension is built with:
 - **Manifest V3** (latest Chrome extension standard)
-- **Vanilla JavaScript** (for content script)
-- **Google Gemini AI** (for logical analysis)
-- **Node.js & dotenv** (for secure environment variable management)
-- **React** (prepared for future UI enhancements)
+- **Vanilla JavaScript** (lightweight, no framework dependencies)
+- **Google Gemini 2.5 Flash AI** (for logical reasoning analysis)
+- **Chrome Storage API** (secure local API key storage)
+- **Chrome Extension APIs** (context menus, keyboard shortcuts, messaging)
+
+**Recent Updates (October 2025):**
+- ✅ Added Options page for easy API key configuration
+- ✅ Implemented 30-second timeout protection
+- ✅ Enhanced error handling with user-friendly messages (Indonesian)
+- ✅ Removed .env dependency (user-configured API keys)
+- ✅ Model updated to gemini-2.5-flash for better performance
+
+## 📚 Documentation
+
+- [ARCHITECTURE.md](docs/ARCHITECTURE.md) - System architecture and design
+- [IMPLEMENTATION_SUMMARY.md](docs/IMPLEMENTATION_SUMMARY.md) - Implementation details
+- [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) - Detailed troubleshooting guide
+- [QUICK_FIX.md](QUICK_FIX.md) - Quick fixes for common issues
 
 ## 📄 License
 

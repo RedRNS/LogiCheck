@@ -1,136 +1,192 @@
-# LogiCheck Lens - Browser Extension & Web App
-
-Your conversational AI coach for sharpening logical reasoning in an era of mass information.
-
-## 🚀 Quick Start Guide
-
-### For Web Application
-
-#### 1. Install Dependencies
-
-```bash
-# Install all dependencies (root, server, and client)
-npm run install:all
-```
-
-#### 2. Run the Application
-
-Open 2 terminal windows:
-
-```bash
-# Terminal 1 - Start backend server
-npm run dev:server
-
-# Terminal 2 - Start frontend client
-npm run dev:client
-```
-
-The web app will be available at `http://localhost:5173`
-
-#### 3. Configure Your API Key (First Time)
-
-1. Open the web app in your browser
-2. Click **Settings** in the navigation menu
-3. Get your Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
-4. Paste the API key in the Settings page
-5. Click **Test Key** to verify it works
-6. Click **Save API Key**
-
-**🔐 Security:** Your API key is stored **locally** in your browser's localStorage and is **never** sent to our servers. It goes directly from your browser to Google's Gemini API.
-
-### For Chrome Extension
-
-#### 1. Get Your Google AI API Key
-
-1. Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
-2. Sign in with your Google account
-````markdown
 # LogiCheck - Web App & Browser Extension
 
 LogiCheck is a combined web application and browser extension that serves as a conversational AI coach for sharpening logical reasoning, identifying fallacies and biases, and improving argumentative writing.
 
-This single README unifies documentation for both the web application (React + Vite frontend, Node.js backend) and the browser extension (Manifest V3).
+## Table of Contents
+- [Quick Start](#quick-start)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Running the Application](#running-the-application)
+  - [Configure API Key (Web App)](#configure-api-key-web-app)
+  - [Load the Chrome Extension](#load-the-chrome-extension)
+- [Architecture & Project Structure](#architecture--project-structure)
+- [API Endpoints](#api-endpoints)
+- [Features](#features)
+- [AI Model](#ai-model)
+- [Troubleshooting](#troubleshooting)
+- [Documentation](#documentation)
 
 ## 🚀 Quick Start
 
-Prerequisites:
-- Node.js (v18+)
-- (Optional) MongoDB for persistent storage
-- A Google Gemini API key (get from https://aistudio.google.com/app/apikey)
+### Prerequisites
+To get started with LogiCheck, ensure you have the following installed:
+- **Node.js** (v18 or higher): Required to run the backend and frontend.
+- **MongoDB** (optional): Needed for persistent storage of user data and analysis results.
+- **Google Gemini API Key**: Obtain this from [Google AI Studio](https://aistudio.google.com/app/apikey) to enable AI-powered analysis.
 
-1. Install all dependencies (root, server, client):
-```bash
-npm run install:all
-```
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/RedRNS/LogiCheck.git
+   cd LogiCheck
+   ```
+2. Install all dependencies for the root, server, and client:
+   ```bash
+   npm run install:all
+   ```
 
-2. Start the backend server (Terminal 1):
-```bash
-npm run dev:server
-```
+### Running the Application
+1. Start the backend server (Terminal 1):
+   ```bash
+   npm run dev:server
+   ```
+   - The backend will run on `http://localhost:5000`.
+   - Check the terminal for any errors or logs.
 
-3. Start the frontend client (Terminal 2):
-```bash
-npm run dev:client
-```
-
-The web app will be available at `http://localhost:5173`. The backend API runs on `http://localhost:5000` by default.
+2. Start the frontend client (Terminal 2):
+   ```bash
+   npm run dev:client
+   ```
+   - The frontend will be available at `http://localhost:5173`.
 
 ### Configure API Key (Web App)
-1. Open `http://localhost:5173`
-2. Go to Settings → paste your Gemini API key → Test Key → Save
+1. Open the web app in your browser at `http://localhost:5173`.
+2. Navigate to **Settings** in the navigation menu.
+3. Paste your Gemini API key in the input field.
+4. Click **Test Key** to verify the key is valid.
+5. Click **Save** to store the key locally.
 
-Security note: the API key is stored locally in browser localStorage and is NOT uploaded to any server.
+**Security Note:** The API key is stored securely in your browser's localStorage and is never sent to the server.
 
 ### Load the Chrome Extension
-1. Open `chrome://extensions/`
-2. Enable Developer mode
-3. Click "Load unpacked" and select the `extension/` folder in this repo
-4. Configure the API key via the extension Options page
+1. Open Chrome and navigate to `chrome://extensions/`.
+2. Enable **Developer mode** (toggle in the top-right corner).
+3. Click **Load unpacked** and select the `extension/` folder in this repository.
+4. Configure the API key via the extension **Options** page:
+   - Right-click the LogiCheck extension icon in the toolbar.
+   - Select **Options**.
+   - Paste your Gemini API key and click **Save API Key**.
+   - (Optional) Click **Test Key** to verify the key.
 
 ## 🏗️ Architecture & Project Structure
+
+LogiCheck is a full-stack application with the following structure:
 
 ```
 LogiCheck/
 ├── client/          # React frontend (Vite + Tailwind)
+│   ├── src/         # Source code for components, pages, and styles
+│   ├── public/      # Static assets
+│   └── package.json # Frontend dependencies and scripts
 ├── server/          # Node.js / Express backend
+│   ├── routes/      # API route handlers
+│   ├── models/      # MongoDB schemas
+│   ├── controllers/ # Business logic for API endpoints
+│   └── package.json # Backend dependencies and scripts
 ├── extension/       # Browser extension (Manifest V3)
-├── docs/            # Documentation and troubleshooting
+│   ├── background.js # Service worker for API calls
+│   ├── content.js    # Injects sidebar UI into web pages
+│   ├── options.html  # Options page for API key configuration
+│   └── manifest.json # Chrome extension configuration
+├── docs/            # Documentation and troubleshooting guides
 ├── package.json     # Root scripts that orchestrate client/server
 └── README.md        # This file
 ```
 
-## 🔌 API Endpoints (backend)
-- POST /api/analyze - Analyze text for fallacies and reasoning
-- GET /api/dojo/sparring-challenge - Get a Dojo challenge
-- POST /api/dojo/verify-answer - Verify user's Dojo answer
-- POST /api/clinic/analyze-essay - Analyze an essay
+## 🔌 API Endpoints
+The backend provides the following API endpoints:
+
+### Text Analysis
+- `POST /api/analyze`
+  - **Description**: Analyze text for logical fallacies, hidden assumptions, and argument structure.
+  - **Request Body**:
+    ```json
+    {
+      "text": "Your input text here",
+      "apiKey": "Your Gemini API key"
+    }
+    ```
+  - **Response**:
+    ```json
+    {
+      "claims": [...],
+      "fallacies": [...],
+      "questions": [...]
+    }
+    ```
+
+### Dojo
+- `GET /api/dojo/sparring-challenge`
+  - **Description**: Retrieve a fallacy identification challenge.
+- `POST /api/dojo/verify-answer`
+  - **Description**: Verify the user's answer to a challenge.
+
+### Essay Clinic
+- `POST /api/clinic/analyze-essay`
+  - **Description**: Analyze an essay for argumentative quality.
+  - **Request Body**:
+    ```json
+    {
+      "essay": "Your essay text here",
+      "apiKey": "Your Gemini API key"
+    }
+    ```
 
 ## ✨ Features
-- Core Analyzer: identify claims, assumptions, and logical fallacies
-- The Dojo: gamified fallacy-identification practice
-- Essay Clinic: AI feedback on argumentative writing
-- Browser extension: context-menu analysis, sidebar UI, keyboard shortcut
+LogiCheck offers the following features:
+
+### Core Analyzer
+- Two-panel interface for text input and analysis.
+- Identifies main claims, assumptions, and logical fallacies.
+- Provides Socratic questions for deeper reflection.
+
+### The Dojo
+- Gamified practice environment for identifying fallacies and biases.
+- Tracks progress and mastery levels.
+- Immediate feedback with explanations.
+
+### Essay Clinic
+- Rich text editor for essay input.
+- AI analysis focused on argumentation quality.
+- Feedback categories:
+  - Thesis Cohesion
+  - Evidence-to-Claim Linkage
+  - Logical Flow
+  - Counterargument Engagement
+
+### Browser Extension
+- Context menu integration: "Analyze with LogiCheck".
+- Keyboard shortcut: `Ctrl+Shift+L` (Windows/Linux) or `Cmd+Shift+L` (Mac).
+- Sidebar UI for analysis results.
 
 ## 🧠 AI Model
-Uses Google Gemini (recommended: `gemini-2.5-flash`). API requests are proxied from the client to Gemini or directly from the extension depending on configuration.
+LogiCheck uses **Google Gemini 2.5 Flash** for fast and efficient analysis. Key details:
+- **Endpoint**: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`
+- **Why Gemini 2.5 Flash?**
+  - ⚡ Fast response time (3-10 seconds).
+  - 💰 Cost-effective with a free tier available.
+  - 🎯 Optimized for reasoning and critical thinking tasks.
 
-## 🔧 Troubleshooting (common issues)
-- If the web UI doesn't load: ensure `npm run dev:client` is running and open `http://localhost:5173`
-- If backend errors occur: check `npm run dev:server` terminal for logs (server runs on port 5000)
-- Extension not showing: load the `extension/` folder in `chrome://extensions/` with Developer mode on
-- API key errors: re-check key in Settings/Options and use "Test Key"
+## 🔧 Troubleshooting
+If you encounter issues, try the following:
 
-For full troubleshooting details see `docs/TROUBLESHOOTING.md`.
+### Web App
+- **Frontend not loading**: Ensure `npm run dev:client` is running and visit `http://localhost:5173`.
+- **Backend errors**: Check the terminal running `npm run dev:server` for logs.
+
+### Extension
+- **Extension not appearing**: Ensure Developer mode is enabled in `chrome://extensions/` and reload the extension.
+- **API key errors**: Re-check the key in the Options page and use **Test Key**.
+
+For detailed troubleshooting, see `docs/TROUBLESHOOTING.md`.
 
 ## 📚 Documentation
-- `docs/ARCHITECTURE.md`
-- `docs/IMPLEMENTATION_SUMMARY.md`
-- `docs/TROUBLESHOOTING.md`
-- `docs/SETUP_GUIDE.md`
+Additional resources:
+- [ARCHITECTURE.md](docs/ARCHITECTURE.md): System architecture and design.
+- [IMPLEMENTATION_SUMMARY.md](docs/IMPLEMENTATION_SUMMARY.md): Implementation details.
+- [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md): Troubleshooting guide.
+- [SETUP_GUIDE.md](docs/SETUP_GUIDE.md): Setup instructions.
 
 ---
 
 If any specific part still fails (web not loading, extension error, API issues), paste the terminal or browser console error here and I will help debug.
-
-````
-**API Version**: `v1beta`

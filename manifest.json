@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "LogiCheck Lens",
+  "description": "Your AI coach for sharpening logical reasoning. Analyze text on any webpage.",
+  "version": "1.0.0",
+  "permissions": [
+    "activeTab",
+    "contextMenus",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://generativelanguage.googleapis.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "commands": {
+    "analyze-text": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+L",
+        "mac": "Command+Shift+L"
+      },
+      "description": "Analyze selected text with LogiCheck"
+    }
+  }
+}

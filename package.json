@@ -1,0 +1,20 @@
+{
+  "name": "logicheck",
+  "version": "1.0.0",
+  "description": "LogiCheck - Critical Thinking & Logical Fallacy Detection Extension",
+  "main": "background.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "chrome-extension",
+    "logical-fallacy",
+    "critical-thinking",
+    "ai"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  }
+}

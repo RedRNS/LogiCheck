@@ -2,7 +2,7 @@
 // Handles context menu creation, keyboard shortcuts, and API communication
 
 // Import configuration (API key from environment variables)
-const CONFIG = require('./config.js');
+const CONFIG = require('../config/config.js');
 const GOOGLE_AI_API_KEY = CONFIG.GOOGLE_AI_API_KEY;
 
 // Multiple model endpoints to try (fallback mechanism)

@@ -49,7 +49,7 @@ Your conversational AI coach for sharpening logical reasoning in an era of mass 
 2. Navigate to `chrome://extensions/`
 3. Enable **"Developer mode"** (toggle in the top-right corner)
 4. Click **"Load unpacked"**
-5. Select the `LogiCheck` folder (this project directory)
+5. Select the `extension` folder inside the LogiCheck project directory
 6. The extension should now appear in your extensions list
 
 ### 5. Test the Extension
@@ -66,20 +66,27 @@ Your conversational AI coach for sharpening logical reasoning in an era of mass 
 
 ```
 LogiCheck/
-├── manifest.json          # Extension configuration
-├── background.js          # Service worker (handles API calls)
-├── content.js            # Content script (injects sidebar UI)
-├── config.js             # Configuration file (loads environment variables)
-├── .env                  # Environment variables (API keys) - NOT committed
-├── .env.example          # Template for environment variables
-├── .gitignore            # Git ignore rules (includes .env)
-├── package.json          # Node.js dependencies
-├── node_modules/         # Installed packages
-├── src/
-│   ├── App.js           # React component (for future use)
-│   ├── App.css          # Styles (for future use)
-│   └── index.js         # React entry point (for future use)
-└── README.md            # This file
+├── extension/                    # Chrome Extension Files
+│   ├── manifest.json            # Extension configuration
+│   ├── background.js            # Service worker (handles API calls)
+│   └── content.js               # Content script (injects sidebar UI)
+├── config/                       # Configuration Files
+│   └── config.js                # Loads environment variables
+├── docs/                         # Documentation
+│   ├── ARCHITECTURE.md          # System architecture documentation
+│   ├── IMPLEMENTATION_SUMMARY.md # Implementation details
+│   └── TROUBLESHOOTING.md       # Troubleshooting guide
+├── src/                          # React Source (for future use)
+│   ├── App.js                   # React component
+│   ├── App.css                  # Styles
+│   └── index.js                 # React entry point
+├── .env                          # Environment variables (API keys) - NOT committed
+├── .env.example                  # Template for environment variables
+├── .gitignore                    # Git ignore rules
+├── package.json                  # Node.js dependencies
+├── package-lock.json             # Dependency lock file
+├── node_modules/                 # Installed packages
+└── README.md                     # This file
 ```
 
 ## 🎯 Features
@@ -96,21 +103,21 @@ LogiCheck/
 
 This extension uses **Google's Gemini 2.5 Pro** model for fast and efficient analysis. 
 
-**Model**: `gemini-1.5-flash`
+**Model**: `gemini-2.5-Pro`
 **API Version**: v1
-**Endpoint**: `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent`
+**Endpoint**: `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-Pro:generateContent`
 
-Alternative models you can use (edit `background.js`):
+Alternative models you can use (edit `extension/background.js`):
 - `gemini-1.5-pro` - More powerful but slower
 - `gemini-2.0-flash-exp` - Experimental latest version
 
 ## 🔧 Troubleshooting
 
-**For detailed troubleshooting, see [TROUBLESHOOTING.md](TROUBLESHOOTING.md)**
+**For detailed troubleshooting, see [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)**
 
 ### Extension doesn't appear
 - Make sure Developer mode is enabled in `chrome://extensions/`
-- Check that you selected the correct folder when loading unpacked
+- Make sure you selected the `extension` folder (not the root LogiCheck folder) when loading unpacked
 
 ### Sidebar doesn't show when clicking "Analyze with LogiCheck"
 - Check the browser console for errors (F12 → Console tab)
@@ -119,7 +126,7 @@ Alternative models you can use (edit `background.js`):
 - Check the background service worker console for "Gemini API Key loaded: Successfully" message
 
 ### Analysis fails or shows error
-- **Most Common**: Update model name to `gemini-1.5-flash` in `background.js`
+- **Most Common**: Update model name to `gemini-1.5-flash` in `extension/background.js`
 - Verify your Google AI API key is valid and correctly set in `.env`
 - Check if you have API quota remaining
 - Try with a shorter text selection

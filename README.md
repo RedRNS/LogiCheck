@@ -4,24 +4,46 @@ Your conversational AI coach for sharpening logical reasoning in an era of mass 
 
 ## 🚀 Setup Instructions
 
-### 1. Get Your Google AI API Key
+### 1. Install Dependencies
+
+1. Make sure you have [Node.js](https://nodejs.org/) installed
+2. Open terminal in the project directory
+3. Run:
+   ```bash
+   npm install
+   ```
+
+### 2. Get Your Google AI API Key
 
 1. Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
 2. Sign in with your Google account
 3. Click **"Create API Key"**
 4. Copy the generated API key
 
-### 2. Configure the Extension
+### 3. Configure Environment Variables
 
-1. Open `background.js` in your code editor
-2. Find this line near the top:
-   ```javascript
-   const GOOGLE_AI_API_KEY = "YOUR_GOOGLE_AI_API_KEY_HERE";
+1. In the project root, you'll find a file named `.env.example`
+2. Create a copy of this file and rename it to `.env`:
+   ```bash
+   cp .env.example .env
    ```
-3. Replace `YOUR_GOOGLE_AI_API_KEY_HERE` with your actual API key
-4. Save the file
+   Or on Windows:
+   ```bash
+   copy .env.example .env
+   ```
+3. Open the `.env` file in your code editor
+4. Replace the placeholder with your actual API key:
+   ```
+   GEMINI_API_KEY="your-actual-api-key-here"
+   ```
+5. Save the file
 
-### 3. Load the Extension in Chrome
+**⚠️ IMPORTANT SECURITY NOTE:**
+- **NEVER** commit the `.env` file to version control
+- The `.env` file is already listed in `.gitignore` to prevent accidental commits
+- Only share `.env.example` with your team, not `.env`
+
+### 4. Load the Extension in Chrome
 
 1. Open Chrome browser
 2. Navigate to `chrome://extensions/`
@@ -30,7 +52,7 @@ Your conversational AI coach for sharpening logical reasoning in an era of mass 
 5. Select the `LogiCheck` folder (this project directory)
 6. The extension should now appear in your extensions list
 
-### 4. Test the Extension
+### 5. Test the Extension
 
 1. Open any webpage with text (e.g., Wikipedia, news article)
 2. Highlight/select a paragraph or section of text
@@ -47,7 +69,12 @@ LogiCheck/
 ├── manifest.json          # Extension configuration
 ├── background.js          # Service worker (handles API calls)
 ├── content.js            # Content script (injects sidebar UI)
-├── config.js             # Configuration file (API key)
+├── config.js             # Configuration file (loads environment variables)
+├── .env                  # Environment variables (API keys) - NOT committed
+├── .env.example          # Template for environment variables
+├── .gitignore            # Git ignore rules (includes .env)
+├── package.json          # Node.js dependencies
+├── node_modules/         # Installed packages
 ├── src/
 │   ├── App.js           # React component (for future use)
 │   ├── App.css          # Styles (for future use)
@@ -87,19 +114,22 @@ Alternative models you can use (edit `background.js`):
 
 ### Sidebar doesn't show when clicking "Analyze with LogiCheck"
 - Check the browser console for errors (F12 → Console tab)
-- Verify your API key is correctly set in `background.js`
+- Verify your API key is correctly set in the `.env` file
 - Make sure you have an active internet connection
+- Check the background service worker console for "Gemini API Key loaded: Successfully" message
 
 ### Analysis fails or shows error
 - **Most Common**: Update model name to `gemini-1.5-flash` in `background.js`
-- Verify your Google AI API key is valid
+- Verify your Google AI API key is valid and correctly set in `.env`
 - Check if you have API quota remaining
 - Try with a shorter text selection
 
 ### API Key Issues
-- Make sure there are no extra spaces in the API key
-- The key should be wrapped in quotes: `"your-api-key-here"`
+- Make sure the `.env` file exists in the project root
+- Verify there are no extra spaces in the API key
+- The key should be wrapped in quotes: `GEMINI_API_KEY="your-api-key-here"`
 - Visit Google AI Studio to verify your key is active
+- Check the terminal/console for the message "Gemini API Key loaded: Successfully"
 
 ## 📝 Usage Tips
 
@@ -113,7 +143,9 @@ Alternative models you can use (edit `background.js`):
 - All API calls go directly from your browser to Google AI
 - No data is stored on external servers
 - Selected text is only sent to Google AI for analysis
-- Your API key is stored locally in the extension files
+- Your API key is stored securely in the `.env` file (never committed to Git)
+- The `.env` file is automatically excluded from version control via `.gitignore`
+- Environment variables are loaded using the `dotenv` package for secure configuration management
 
 ## 🛠️ Development
 
@@ -121,6 +153,7 @@ This extension is built with:
 - **Manifest V3** (latest Chrome extension standard)
 - **Vanilla JavaScript** (for content script)
 - **Google Gemini AI** (for logical analysis)
+- **Node.js & dotenv** (for secure environment variable management)
 - **React** (prepared for future UI enhancements)
 
 ## 📄 License

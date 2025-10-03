@@ -1,4 +1,17 @@
-# LogiCheck L### 2. Load the Extension in Chrome
+# LogiCheck Lens - Browser Extension
+
+Your conversational AI coach for sharpening logical reasoning in an era of mass information.
+
+## 🚀 Quick Start Guide
+
+### 1. Get Your Google AI API Key
+
+1. Visit [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. Sign in with your Google account
+3. Click **"Create API Key"** or **"Get API Key"**
+4. Copy the generated API key (you'll need this in step 3)
+
+### 2. Load the Extension in Chrome
 
 1. Open Chrome browser
 2. Navigate to `chrome://extensions/`

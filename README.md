@@ -59,7 +59,7 @@ LogiCheck/
 
 - ✅ Context menu integration ("Analyze with LogiCheck")
 - ✅ Keyboard shortcut (Ctrl+Shift+L / Cmd+Shift+L)
-- ✅ AI-powered logical analysis using Google's Gemini 1.5 Flash model
+- ✅ AI-powered logical analysis using Google's Gemini 2.5 Pro model
 - ✅ Beautiful, non-intrusive sidebar UI
 - ✅ Identifies logical fallacies
 - ✅ Extracts main claims and assumptions
@@ -67,7 +67,7 @@ LogiCheck/
 
 ## 🤖 AI Model Information
 
-This extension uses **Google's Gemini 1.5 Flash** model for fast and efficient analysis. 
+This extension uses **Google's Gemini 2.5 Pro** model for fast and efficient analysis. 
 
 **Model**: `gemini-1.5-flash`
 **API Version**: v1

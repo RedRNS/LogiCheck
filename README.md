@@ -204,7 +204,7 @@ This extension is built with:
 - [ARCHITECTURE.md](docs/ARCHITECTURE.md) - System architecture and design
 - [IMPLEMENTATION_SUMMARY.md](docs/IMPLEMENTATION_SUMMARY.md) - Implementation details
 - [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) - Detailed troubleshooting guide
-- [QUICK_FIX.md](QUICK_FIX.md) - Quick fixes for common issues
+- [SETUP_GUIDE.md](docs/SETUP_GUIDE.md) - Setup guide and quick start
 
 ## 📄 License
 

@@ -125,6 +125,23 @@ Alternative models you can use (edit `extension/background.js`):
 - Make sure you have an active internet connection
 - Check the background service worker console for "Gemini API Key loaded: Successfully" message
 
+### How to provide the GEMINI_API_KEY to the extension at runtime
+
+Important: Browser extensions cannot read your local `.env` file at runtime. The `.env` file is useful for development scripts and local Node tools, but the extension service worker runs inside Chrome and needs the key available via the extension runtime storage.
+
+Quick dev method (temporarily set the key):
+
+1. Open DevTools for the extension's background service worker (chrome://extensions → find LogiCheck → Service worker → "background page" → Inspect).
+2. In the Console, run the following to set your key (replace with the real key):
+
+```javascript
+chrome.runtime.sendMessage({ action: 'setApiKey', key: 'PASTE_YOUR_REAL_GEMINI_KEY_HERE' }, (resp) => console.log(resp));
+```
+
+3. After that, the background worker will store the key in `chrome.storage.local` and use it for API calls. This is intended for development; for production consider adding an options page so users can securely input their key.
+
+Note: If you prefer a persistent developer setup, you can programmatically write `chrome.storage.local` entries via an options page or small script injected into the background worker during development.
+
 ### Analysis fails or shows error
 - **Most Common**: Update model name to `gemini-1.5-flash` in `extension/background.js`
 - Verify your Google AI API key is valid and correctly set in `.env`

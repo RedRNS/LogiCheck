@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>LogiCheck Options</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main>
+      <h1>LogiCheck - Options</h1>
+      <p>Enter your Gemini API key below. This value is stored locally in your browser and never uploaded anywhere by this extension.</p>
+
+      <label for="apiKey">Gemini API Key</label>
+      <input id="apiKey" type="text" placeholder="PASTE_YOUR_GEMINI_KEY_HERE" />
+
+      <div class="buttons">
+        <button id="saveBtn" disabled>Save</button>
+        <button id="testBtn">Test key</button>
+        <button id="clearBtn">Clear</button>
+      </div>
+
+      <div id="status" aria-live="polite"></div>
+    </main>
+
+    <script type="module" src="options.js"></script>
+  </body>
+</html>

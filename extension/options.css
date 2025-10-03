@@ -1,0 +1,12 @@
+:root{font-family:Segoe UI,Roboto,Arial,sans-serif}
+body{margin:0;padding:18px;background:#f7f7f9;color:#111}
+main{max-width:720px;margin:0 auto;background:#fff;border-radius:8px;padding:18px;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+h1{font-size:20px;margin-top:0}
+label{display:block;margin-top:12px;font-weight:600}
+input[type=text]{width:100%;padding:8px;margin-top:6px;border:1px solid #ddd;border-radius:4px}
+.buttons{margin-top:12px}
+.buttons button{padding:8px 12px;border-radius:6px;border:0;background:#4b7bec;color:#fff;margin-right:8px;cursor:pointer}
+.buttons button#clearBtn{background:#e74c3c}
+.buttons button#testBtn{background:#27ae60}
+.buttons button:disabled{opacity:.5;cursor:not-allowed}
+#status{margin-top:12px}

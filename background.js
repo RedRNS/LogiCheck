@@ -1,24 +1,28 @@
 // LogiCheck Lens - Background Service Worker
 // Handles context menu creation, keyboard shortcuts, and API communication
 
-// Import runtime config helper (ES module compatible with service worker)
-import { getApiKey } from './config.js';
-
-// Initialize API key and endpoints lazily
+// Support both Node and browser environments. Node tools may use the root
+// background.js for scripts, but the extension uses `extension/background.js`.
+let CONFIG = {};
 let GOOGLE_AI_API_KEY = null;
-let MODEL_ENDPOINTS = null;
+let MODEL_ENDPOINTS = [];
 
-async function ensureApiKeyLoaded() {
-  if (!GOOGLE_AI_API_KEY) {
-    GOOGLE_AI_API_KEY = await getApiKey();
+if (typeof require === 'function' && typeof module !== 'undefined') {
+  try {
+    // Node environment — load the local config (uses dotenv)
+    /* eslint-disable global-require */
+    const nodeConfig = require('./config.js');
+    CONFIG = nodeConfig || {};
+    GOOGLE_AI_API_KEY = CONFIG.GOOGLE_AI_API_KEY || null;
     if (GOOGLE_AI_API_KEY) {
       MODEL_ENDPOINTS = [
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${GOOGLE_AI_API_KEY}`
       ];
-      console.log('Gemini API Key loaded at runtime:', 'Successfully');
-    } else {
-      console.warn('Gemini API Key not found in chrome.storage.local');
     }
+    /* eslint-enable global-require */
+  } catch (e) {
+    // If require fails, we are likely running in the browser; ignore
+    console.warn('Node config not loaded (running in browser?):', e.message || e);
   }
 }
 
@@ -26,12 +30,6 @@ async function ensureApiKeyLoaded() {
 async function analyzeTextWithGoogleAI(selectedText) {
   let lastError = null;
   
-  // Ensure API key and endpoints are loaded
-  await ensureApiKeyLoaded();
-  if (!MODEL_ENDPOINTS || MODEL_ENDPOINTS.length === 0) {
-    throw new Error('Gemini API key is missing. Please set GEMINI_API_KEY via the extension options or chrome.storage.local');
-  }
-
   // Try each model endpoint until one works
   for (let i = 0; i < MODEL_ENDPOINTS.length; i++) {
     try {
@@ -209,40 +207,4 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true; // Keep the message channel open for async response
   }
   return true;
-});
-
-// Support setting the API key at runtime (from an options page or dev console)
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === 'setApiKey' && request.key) {
-    try {
-      if (chrome && chrome.storage && chrome.storage.local) {
-        chrome.storage.local.set({ GEMINI_API_KEY: request.key }, () => {
-          // Reload key in memory
-          GOOGLE_AI_API_KEY = request.key;
-          MODEL_ENDPOINTS = [`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${GOOGLE_AI_API_KEY}`];
-          sendResponse({ status: 'ok' });
-        });
-        return true; // async
-      }
-    } catch (e) {
-      console.error('Failed to set API key', e);
-      sendResponse({ status: 'error', error: e.message });
-    }
-  }
-
-  // Support clearing the key (allow empty string)
-  if (request.action === 'setApiKey' && request.key === '') {
-    try {
-      chrome.storage.local.remove('GEMINI_API_KEY', () => {
-        GOOGLE_AI_API_KEY = null;
-        MODEL_ENDPOINTS = null;
-        sendResponse({ status: 'ok' });
-      });
-      return true;
-    } catch (e) {
-      sendResponse({ status: 'error', error: e.message });
-    }
-  }
-
-  return false;
 });

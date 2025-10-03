@@ -290,6 +290,20 @@ function showErrorState(errorMessage) {
     socraticQuestion: ""
   };
   
+  // Create user-friendly error message
+  let friendlyMessage = errorMessage;
+  if (errorMessage.includes('API key')) {
+    friendlyMessage = 'API key belum dikonfigurasi. Klik kanan pada icon extension > Options untuk mengatur API key.';
+  } else if (errorMessage.includes('timeout')) {
+    friendlyMessage = 'Request timeout - API terlalu lama merespons. Silakan coba lagi.';
+  } else if (errorMessage.includes('401')) {
+    friendlyMessage = 'API key tidak valid. Silakan periksa API key Anda di extension options.';
+  } else if (errorMessage.includes('429')) {
+    friendlyMessage = 'Terlalu banyak request. Silakan tunggu beberapa saat dan coba lagi.';
+  } else if (errorMessage.includes('500') || errorMessage.includes('503')) {
+    friendlyMessage = 'Server API sedang bermasalah. Silakan coba lagi nanti.';
+  }
+  
   sidebarContainer.innerHTML = `
     <div class="logicheck-sidebar">
       <div class="logicheck-header">
@@ -300,8 +314,12 @@ function showErrorState(errorMessage) {
         <div style="padding: 20px; text-align: center;">
           <div style="font-size: 48px; color: #f56565; margin-bottom: 16px;">⚠️</div>
           <h3 style="color: #c53030; margin-bottom: 12px;">Analysis Failed</h3>
-          <p style="color: #4a5568; line-height: 1.6;">${errorMessage}</p>
-          <p style="color: #718096; font-size: 14px; margin-top: 16px;">Please try again or check your API key configuration.</p>
+          <p style="color: #4a5568; line-height: 1.6; margin-bottom: 12px;">${friendlyMessage}</p>
+          <details style="margin-top: 16px; text-align: left; background: #f7fafc; padding: 12px; border-radius: 6px;">
+            <summary style="cursor: pointer; color: #718096; font-size: 14px; margin-bottom: 8px;">Detail Error Teknis</summary>
+            <p style="color: #718096; font-size: 13px; font-family: monospace; word-break: break-word;">${errorMessage}</p>
+          </details>
+          <p style="color: #718096; font-size: 14px; margin-top: 16px;">Butuh bantuan? Periksa console browser (F12) untuk detail lebih lanjut.</p>
         </div>
       </div>
     </div>

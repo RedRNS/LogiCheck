@@ -13,7 +13,7 @@ async function ensureApiKeyLoaded() {
     GOOGLE_AI_API_KEY = await getApiKey();
     if (GOOGLE_AI_API_KEY) {
       MODEL_ENDPOINTS = [
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${GOOGLE_AI_API_KEY}`
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GOOGLE_AI_API_KEY}`
       ];
       console.log('Gemini API Key loaded at runtime:', 'Successfully');
     } else {
@@ -28,8 +28,20 @@ async function analyzeTextWithGoogleAI(selectedText) {
   
   // Ensure API key and endpoints are loaded
   await ensureApiKeyLoaded();
+  
+  // Validate API key first
+  if (!GOOGLE_AI_API_KEY) {
+    return {
+      success: false,
+      error: 'API key tidak ditemukan. Silakan set GEMINI_API_KEY melalui extension options.'
+    };
+  }
+  
   if (!MODEL_ENDPOINTS || MODEL_ENDPOINTS.length === 0) {
-    throw new Error('Gemini API key is missing. Please set GEMINI_API_KEY via the extension options or chrome.storage.local');
+    return {
+      success: false,
+      error: 'Gemini API key belum dikonfigurasi. Silakan set API key melalui extension options.'
+    };
   }
 
   // Try each model endpoint until one works
@@ -46,15 +58,17 @@ async function analyzeTextWithGoogleAI(selectedText) {
     }
   }
   
-  // If all endpoints failed, throw the last error
-  throw lastError || new Error('All model endpoints failed');
+  // If all endpoints failed, return error with detailed message
+  return {
+    success: false,
+    error: lastError?.message || 'All model endpoints failed'
+  };
 }
 
 // Helper function to try analysis with a specific endpoint
 async function tryAnalyzeWithEndpoint(apiUrl, selectedText) {
-  try {
-    // Construct a direct, streamlined prompt
-    const prompt = `
+  // Construct a direct, streamlined prompt
+  const prompt = `
 Analyze the following text for its logical structure. Your response MUST be a single, minified JSON object with the following keys: "mainClaim", "assumptions", "fallacies", "socraticQuestion".
 
 - "mainClaim": A one-sentence summary of the author's central argument.
@@ -67,26 +81,35 @@ If a key has no findings, return an empty string or an empty list. Do not add an
 Text to analyze: "${selectedText}"
 `;
 
-    // Prepare the request body
-    const requestBody = {
-      contents: [{
-        parts: [{ text: prompt }]
-      }]
-    };
+  // Prepare the request body
+  const requestBody = {
+    contents: [{
+      parts: [{ text: prompt }]
+    }]
+  };
 
-    // Make the API call
+  // Create timeout controller
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
+  try {
+    // Make the API call with timeout
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(requestBody)
+      body: JSON.stringify(requestBody),
+      signal: controller.signal
     });
+    
+    clearTimeout(timeoutId);
 
     // Check if the response is OK
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`API Error: ${errorData.error?.message || 'Unknown error'}`);
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`;
+      throw new Error(`API Error: ${errorMessage}`);
     }
 
     // Parse the response
@@ -126,11 +149,11 @@ Text to analyze: "${selectedText}"
     };
 
   } catch (error) {
-    console.error('Error in analyzeTextWithGoogleAI:', error);
-    return {
-      success: false,
-      error: error.message || 'An unexpected error occurred'
-    };
+    clearTimeout(timeoutId);
+    if (error.name === 'AbortError') {
+      throw new Error('Request timeout - API took too long to respond (30s)');
+    }
+    throw error;
   }
 }
 
@@ -219,7 +242,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         chrome.storage.local.set({ GEMINI_API_KEY: request.key }, () => {
           // Reload key in memory
           GOOGLE_AI_API_KEY = request.key;
-          MODEL_ENDPOINTS = [`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent?key=${GOOGLE_AI_API_KEY}`];
+          MODEL_ENDPOINTS = [`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GOOGLE_AI_API_KEY}`];
           sendResponse({ status: 'ok' });
         });
         return true; // async

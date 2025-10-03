@@ -57,7 +57,7 @@ testBtn.addEventListener('click', async () => {
   }
   setStatus('Testing key (making lightweight request)...', true);
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(key)}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(key)}`;
     const body = {
       contents: [{ parts: [{ text: 'Hello' }] }]
     };

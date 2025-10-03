@@ -4,6 +4,57 @@
 
 ---
 
+### ❌ Issue: Loading Tidak Selesai / Infinite Loading (UPDATED - Oct 2025)
+
+**Gejala**:
+- Sidebar menampilkan "Analyzing text..." tanpa henti
+- Loading spinner berputar terus tanpa hasil
+- Extension tidak memberikan hasil atau error message
+
+**Penyebab Umum**:
+1. **API Key belum dikonfigurasi atau tidak valid** (Error 401)
+2. **Request timeout** - API terlalu lama merespons
+3. **Rate limit exceeded** (Error 429)
+4. **Server error** dari Google AI API (500/503)
+
+**Solusi** ✅:
+
+#### 1. Konfigurasi API Key
+1. Klik kanan pada icon extension LogiCheck di toolbar
+2. Pilih **Options**
+3. Masukkan Gemini API key yang valid
+4. Klik **Save API Key**
+5. Refresh halaman dan coba lagi
+
+**Cara mendapatkan API key:**
+- Kunjungi: https://makersuite.google.com/app/apikey
+- Login dengan akun Google
+- Create API key
+- Copy dan paste ke extension options
+
+#### 2. Jika Mendapat Error Timeout
+- Coba dengan teks yang lebih pendek (< 1000 kata)
+- Periksa koneksi internet
+- Tunggu beberapa saat dan retry
+- Extension sekarang memiliki timeout 30 detik otomatis
+
+#### 3. Rate Limit (Terlalu Banyak Request)
+- Tunggu 1-2 menit sebelum mencoba lagi
+- Free tier Gemini ada batasan: ~15 requests per minute
+
+#### 4. Periksa Error Detail
+- Buka Developer Tools (F12)
+- Lihat tab Console untuk error message
+- Error sekarang ditampilkan dalam bahasa Indonesia di UI
+
+**Update Terbaru**:
+- ✅ Timeout mechanism (30 detik) mencegah infinite loading
+- ✅ Validasi API key sebelum request
+- ✅ Error messages lebih informatif dan dalam bahasa Indonesia
+- ✅ Detail error teknis tersedia di dropdown
+
+---
+
 ### ❌ Issue: "API Error: models/gemini-pro is not found for API version v1beta"
 
 **Error Message**:
@@ -26,9 +77,10 @@ const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1/models/gemi
 ```
 
 **Available Models** (as of October 2025):
-- `gemini-1.5-flash` - Fast, efficient (Recommended)
+- `gemini-1.5-flash` - Fast, efficient (✅ CURRENTLY USED - RECOMMENDED)
 - `gemini-1.5-pro` - More powerful, slower
 - `gemini-2.0-flash-exp` - Experimental latest version
+- ❌ `gemini-2.5-pro` - NOT AVAILABLE (will cause 404 error)
 
 ---
 

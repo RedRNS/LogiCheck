@@ -29,7 +29,6 @@ cd LogiCheck
 
 ### Load in Chrome
 
-1. Open Chrome browser
 2. Go to `chrome://extensions/`
 3. Turn ON **"Developer mode"** (toggle in top-right)
 4. Click **"Load unpacked"**
@@ -38,7 +37,6 @@ cd LogiCheck
 
 ---
 
-## Step 3: Configure Your API Key (1 minute)
 
 **IMPORTANT:** This is required before you can use LogiCheck!
 
@@ -47,15 +45,10 @@ cd LogiCheck
 3. Select **"Options"**
 4. A new tab will open with the LogiCheck Options page
 5. Paste your API key from Step 1 into the text field
-6. Click **"Save API Key"**
 7. (Optional) Click **"Test key"** to verify it works
    - ✅ Success: "Key test succeeded"
    - ❌ Error: Check your key and try again
-
----
-
 ## Step 4: Try It Out! (1 minute)
-
 1. Go to any website with text (try [Wikipedia](https://wikipedia.org))
 2. Select/highlight a paragraph
 3. **Right-click** → Choose **"Analyze with LogiCheck"**
@@ -70,9 +63,6 @@ cd LogiCheck
 
 ---
 
-## Troubleshooting
-
-### ❌ "API key belum dikonfigurasi"
 → You forgot Step 3! Configure your API key in Options.
 
 ### ❌ "API key tidak valid" (401 error)

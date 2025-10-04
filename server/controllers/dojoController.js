@@ -223,3 +223,199 @@ export const verifySparringAnswer = async (req, res) => {
     });
   }
 };
+
+/**
+ * Bias Blindspot Challenge Database
+ * Contains pairs of articles on the same topic from opposing perspectives
+ */
+const biasDatabase = [
+  {
+    topic: "Climate Change Policy",
+    articleA: {
+      source: "Progressive News Network",
+      bias: "Left-leaning",
+      title: "Climate Crisis Demands Immediate Action",
+      content: "Scientists are sounding the alarm: our planet is on the brink of catastrophe. The devastating wildfires, unprecedented floods, and scorching heatwaves we've witnessed are not random events—they're dire warnings of the climate emergency we face. Every day of inaction is a betrayal of future generations. Progressive leaders are fighting tooth and nail against the fossil fuel industry's stranglehold on our government, but conservative politicians continue to deny science and protect their corporate donors. We must act now with bold, sweeping reforms before it's too late."
+    },
+    articleB: {
+      source: "Conservative Policy Review",
+      bias: "Right-leaning",
+      title: "Balanced Approach Needed for Climate Policy",
+      content: "While climate change is a concern that deserves attention, radical environmentalists are pushing extreme policies that would devastate our economy and hurt working families. Their alarmist rhetoric ignores the real-world consequences of shutting down entire industries overnight. Hardworking Americans in energy sectors would lose their jobs, while elitist politicians fly in private jets to climate conferences. We need sensible, market-based solutions that protect both our environment and our prosperity—not the job-killing regulations that liberal activists demand."
+    }
+  },
+  {
+    topic: "Education Reform",
+    articleA: {
+      source: "Teachers United Journal",
+      bias: "Pro-teacher union",
+      title: "Public Schools Under Attack by Privatization Agenda",
+      content: "Corporate interests are systematically dismantling our public education system. Greedy charter school operators and voucher advocates are siphoning away desperately needed funds from struggling public schools, all while lining their own pockets. Our dedicated teachers—who already sacrifice so much for poverty-stricken students—face unconscionable budget cuts while billionaires push their privatization schemes. These reformers care nothing about education quality; they only see dollar signs. We must stand with our heroic teachers and protect public education from these predatory corporate raiders."
+    },
+    articleB: {
+      source: "Parents for School Choice",
+      bias: "Pro-school choice",
+      title: "Empowering Parents Through Education Options",
+      content: "For too long, teachers unions have held our children's education hostage to protect their own interests. Thousands of students remain trapped in failing schools while union bosses fight any attempt at meaningful reform. Parents—especially in underserved communities—are demanding the freedom to choose the best education for their children, whether that's a charter school, private school, or homeschooling. But the education establishment continues its fear-mongering campaign, protecting the status quo at the expense of student success. It's time to put children first and break the unions' monopoly on education."
+    }
+  },
+  {
+    topic: "Immigration Policy",
+    articleA: {
+      source: "Border Security Today",
+      bias: "Restrictionist",
+      title: "Border Crisis Threatens National Security",
+      content: "Our southern border is in complete chaos. Waves of illegal immigrants are flooding across, overwhelming our communities and draining public resources. Criminal cartels are exploiting our weak border enforcement, trafficking dangerous drugs and weapons into American neighborhoods. Law-abiding citizens are paying the price while politicians turn a blind eye to this invasion. Every country has the right—the duty—to protect its borders and control who enters. Yet open-borders advocates recklessly dismiss these legitimate security concerns as 'xenophobia.' We need leaders with the courage to enforce our laws and protect American families."
+    },
+    articleB: {
+      source: "New Americans Coalition",
+      bias: "Pro-immigration",
+      title: "Compassion and Justice for Immigrant Families",
+      content: "Heartbreaking images of families torn apart at the border reveal the cruelty of our broken immigration system. Desperate refugees fleeing violence and persecution are being treated like criminals by xenophobic politicians who exploit fear for political gain. These vulnerable people—including innocent children—deserve compassion, not demonization. They're seeking the same opportunities our own ancestors sought when they came to America. Yet hardliners continue their inhumane crusade, spreading racist rhetoric and proposing cruel policies that violate our nation's values. We must reject this hatred and embrace our identity as a nation of immigrants."
+    }
+  }
+];
+
+/**
+ * Get a random Bias Blindspot Challenge
+ * GET /api/dojo/bias-challenge
+ */
+export const getBiasChallenge = async (req, res) => {
+  try {
+    // Select a random challenge from the bias database
+    const randomIndex = Math.floor(Math.random() * biasDatabase.length);
+    const challenge = biasDatabase[randomIndex];
+
+    const response = {
+      challengeId: uuidv4(),
+      topic: challenge.topic,
+      articleA: challenge.articleA,
+      articleB: challenge.articleB,
+      instructions: "Highlight examples of loaded language, emotional appeals, and biased framing in both articles. Notice how each source presents the same topic through a different lens."
+    };
+
+    res.json(response);
+
+  } catch (error) {
+    console.error('Error in getBiasChallenge:', error);
+    res.status(500).json({
+      error: {
+        message: 'Failed to fetch bias challenge',
+        status: 500
+      }
+    });
+  }
+};
+
+/**
+ * Analyze user's bias highlights and provide feedback
+ * POST /api/dojo/analyze-bias-highlights
+ */
+export const analyzeBiasHighlights = async (req, res) => {
+  try {
+    const { challengeId, articleAHighlights, articleBHighlights, topic } = req.body;
+
+    if (!articleAHighlights || !articleBHighlights || !topic) {
+      return res.status(400).json({
+        error: {
+          message: 'Missing required fields',
+          status: 400
+        }
+      });
+    }
+
+    // Count highlights by category
+    const countByCategory = (highlights) => {
+      return highlights.reduce((acc, h) => {
+        acc[h.category] = (acc[h.category] || 0) + 1;
+        return acc;
+      }, {});
+    };
+
+    const articleAStats = countByCategory(articleAHighlights);
+    const articleBStats = countByCategory(articleBHighlights);
+    const totalHighlights = articleAHighlights.length + articleBHighlights.length;
+
+    // Generate feedback based on highlights
+    let feedback = {
+      overallScore: 0,
+      strengths: [],
+      improvements: [],
+      insights: [],
+      categoryBreakdown: {
+        loaded: (articleAStats.loaded || 0) + (articleBStats.loaded || 0),
+        emotional: (articleAStats.emotional || 0) + (articleBStats.emotional || 0),
+        framing: (articleAStats.framing || 0) + (articleBStats.framing || 0)
+      }
+    };
+
+    // Evaluate completeness
+    if (totalHighlights >= 10) {
+      feedback.strengths.push("Excellent thoroughness! You identified a substantial number of bias indicators across both articles.");
+      feedback.overallScore += 30;
+    } else if (totalHighlights >= 5) {
+      feedback.strengths.push("Good effort in identifying bias indicators in both articles.");
+      feedback.overallScore += 20;
+    } else {
+      feedback.improvements.push("Try to identify more examples of bias. Look closely at word choices, emotional language, and how facts are framed.");
+      feedback.overallScore += 10;
+    }
+
+    // Evaluate category diversity
+    const categoriesUsed = Object.keys({...articleAStats, ...articleBStats}).length;
+    if (categoriesUsed === 3) {
+      feedback.strengths.push("Great job identifying all three types of bias: loaded language, emotional appeals, and biased framing!");
+      feedback.overallScore += 30;
+    } else if (categoriesUsed === 2) {
+      feedback.improvements.push("You identified two types of bias. Try to also look for the third category to get a more complete picture.");
+      feedback.overallScore += 20;
+    } else {
+      feedback.improvements.push("Focus on identifying different types of bias, not just one category. Look for loaded language, emotional appeals, AND biased framing.");
+      feedback.overallScore += 10;
+    }
+
+    // Evaluate balance between articles
+    const articleARatio = articleAHighlights.length / totalHighlights;
+    if (articleARatio >= 0.4 && articleARatio <= 0.6) {
+      feedback.strengths.push("Well-balanced analysis! You recognized that both articles contain bias, not just one perspective.");
+      feedback.overallScore += 25;
+    } else {
+      feedback.improvements.push("Try to identify bias in BOTH articles more evenly. Remember, both perspectives use biased language—not just one side.");
+      feedback.overallScore += 10;
+    }
+
+    // Specific insights based on the topic
+    feedback.insights.push("Both articles use emotionally charged language to influence readers rather than presenting neutral facts.");
+    feedback.insights.push("Notice how each source frames the same issue completely differently based on their ideological perspective.");
+    feedback.insights.push("Loaded language often reveals the author's bias more clearly than the facts they present.");
+
+    // Cap score at 100
+    feedback.overallScore = Math.min(feedback.overallScore, 100);
+
+    // Add performance message
+    if (feedback.overallScore >= 80) {
+      feedback.performanceLevel = "Expert";
+      feedback.message = "Outstanding! You have a keen eye for identifying bias in different forms.";
+    } else if (feedback.overallScore >= 60) {
+      feedback.performanceLevel = "Proficient";
+      feedback.message = "Good work! You're developing strong skills in recognizing biased language.";
+    } else if (feedback.overallScore >= 40) {
+      feedback.performanceLevel = "Developing";
+      feedback.message = "You're on the right track. Keep practicing to sharpen your bias detection skills.";
+    } else {
+      feedback.performanceLevel = "Beginner";
+      feedback.message = "Keep practicing! Bias detection is a skill that improves with experience.";
+    }
+
+    res.json(feedback);
+
+  } catch (error) {
+    console.error('Error in analyzeBiasHighlights:', error);
+    res.status(500).json({
+      error: {
+        message: 'Failed to analyze bias highlights',
+        status: 500
+      }
+    });
+  }
+};

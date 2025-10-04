@@ -95,26 +95,26 @@ const EssayClinicPage = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-green-500 to-emerald-500 bg-clip-text text-transparent">
           Essay Clinic
         </h1>
-        <p className="text-gray-600 max-w-2xl mx-auto">
+  <p className="text-gray-600 max-w-2xl mx-auto">
           Get AI-powered feedback on your argumentative writing. We analyze thesis cohesion, evidence quality, logical flow, and counterargument engagement.
         </p>
       </div>
 
-      {/* Info Cards */}
+      {/* Info Cards - now with green accent */}
       <div className="grid md:grid-cols-4 gap-4">
-        {[
-          { icon: '🎯', title: 'Thesis Cohesion', desc: 'Does your essay support the main thesis?' },
+        {[{
+          icon: '🎯', title: 'Thesis Cohesion', desc: 'Does your essay support the main thesis?' },
           { icon: '🔗', title: 'Evidence Linkage', desc: 'Is evidence relevant and sufficient?' },
           { icon: '🌊', title: 'Logical Flow', desc: 'Are there gaps or contradictions?' },
           { icon: '⚖️', title: 'Counterarguments', desc: 'Are opposing views addressed?' },
         ].map((item, index) => (
-          <div key={index} className="card text-center">
-            <div className="text-3xl mb-2">{item.icon}</div>
-            <h3 className="font-semibold text-sm mb-1">{item.title}</h3>
-            <p className="text-xs text-gray-600">{item.desc}</p>
+          <div key={index} className="card text-center border-green-200 bg-green-50">
+            <div className="text-3xl mb-2 text-green-600">{item.icon}</div>
+            <h3 className="font-semibold text-sm mb-1 text-green-800">{item.title}</h3>
+            <p className="text-xs text-green-700">{item.desc}</p>
           </div>
         ))}
       </div>
@@ -124,11 +124,11 @@ const EssayClinicPage = () => {
         {/* Left Panel - Editor */}
         <div className="card">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold flex items-center space-x-2">
+            <h2 className="text-xl font-semibold flex items-center space-x-2 text-green-800">
               <FileText className="w-5 h-5 text-green-600" />
               <span>Your Essay</span>
             </h2>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-green-600">
               {essayText.length} characters
             </span>
           </div>
@@ -154,8 +154,8 @@ const EssayClinicPage = () => {
 
           <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
             <div className="flex items-start space-x-2">
-              <Lightbulb className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-              <div className="text-sm text-yellow-800">
+              <Lightbulb className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-green-800">
                 <strong>Note:</strong> This tool focuses on argumentation quality, not grammar or style. 
                 For best results, submit essays with a clear thesis and supporting arguments.
               </div>
@@ -257,10 +257,10 @@ const EssayClinicPage = () => {
 
           {!annotations.length && !loading && !error && (
             <div className="card text-center py-12">
-              <div className="text-gray-400 mb-4">
+              <div className="text-green-300 mb-4">
                 <FileText className="w-16 h-16 mx-auto" />
               </div>
-              <p className="text-gray-500">
+              <p className="text-green-600">
                 Enter your essay in the editor and click "Analyze My Essay" to receive feedback
               </p>
             </div>

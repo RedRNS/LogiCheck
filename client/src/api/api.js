@@ -62,6 +62,33 @@ export const verifySparringAnswer = async (answerData) => {
 };
 
 /**
+ * Get a new bias blindspot challenge
+ * @returns {Promise} Challenge data with two articles
+ */
+export const getBiasChallenge = async () => {
+  try {
+    const response = await api.get('/dojo/bias-challenge');
+    return response.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+
+/**
+ * Analyze user's bias highlights and get feedback
+ * @param {object} data - { challengeId, articleAHighlights, articleBHighlights, topic }
+ * @returns {Promise} Feedback analysis
+ */
+export const analyzeBiasHighlights = async (data) => {
+  try {
+    const response = await api.post('/dojo/analyze-bias-highlights', data);
+    return response.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+
+/**
  * Analyze an essay for argumentative quality
  * @param {string} essayText - The essay to analyze
  * @returns {Promise} Analysis with annotations

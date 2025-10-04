@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { Send, Sparkles, Brain } from 'lucide-react';
+import { Sparkles, Brain } from 'lucide-react';
 import { analyzeText } from '../api/api';
 import { hasApiKey } from '../utils/apiKeyUtils';
 import LoadingSpinner from '../components/LoadingSpinner';
 import Alert from '../components/Alert';
 import FallacyCard from '../components/FallacyCard';
-import ChatBubble from '../components/ChatBubble';
 import ApiKeyWarning from '../components/ApiKeyWarning';
 
 const AnalyzerPage = () => {
@@ -13,8 +12,6 @@ const AnalyzerPage = () => {
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [chatMessages, setChatMessages] = useState([]);
-  const [chatInput, setChatInput] = useState('');
 
   const handleAnalyze = async () => {
     if (!inputText.trim()) {
@@ -30,46 +27,15 @@ const AnalyzerPage = () => {
     setLoading(true);
     setError(null);
     setAnalysis(null);
-    setChatMessages([]);
 
     try {
       const result = await analyzeText(inputText);
       setAnalysis(result);
-      
-      // Initialize chat with the Socratic question
-      if (result.socraticQuestion) {
-        setChatMessages([
-          { text: result.socraticQuestion, isUser: false }
-        ]);
-      }
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleSendMessage = () => {
-    if (!chatInput.trim()) return;
-
-    // Add user message to chat
-    setChatMessages(prev => [
-      ...prev,
-      { text: chatInput, isUser: true }
-    ]);
-
-    // Simulate AI response (in production, this would call the API)
-    setTimeout(() => {
-      setChatMessages(prev => [
-        ...prev,
-        { 
-          text: "That's an interesting perspective. Can you elaborate on the evidence that supports this viewpoint?",
-          isUser: false 
-        }
-      ]);
-    }, 1000);
-
-    setChatInput('');
   };
 
   return (
@@ -164,38 +130,18 @@ const AnalyzerPage = () => {
                 />
               )}
 
-              {/* Socratic Dialogue */}
-              <div className="card bg-gradient-to-br from-secondary-50 to-primary-50">
-                <h3 className="font-semibold text-lg mb-4 flex items-center space-x-2">
-                  <Sparkles className="w-5 h-5 text-secondary-600" />
-                  <span>Socratic Dialogue</span>
-                </h3>
-                
-                <div className="space-y-4 max-h-[400px] overflow-y-auto mb-4 pr-2">
-                  {chatMessages.map((msg, index) => (
-                    <ChatBubble key={index} message={msg.text} isUser={msg.isUser} />
-                  ))}
+              {/* Socratic Questions */}
+              {analysis.socraticQuestion && (
+                <div className="card bg-gradient-to-br from-secondary-50 to-primary-50 border-l-4 border-l-secondary-500">
+                  <h3 className="font-semibold text-lg mb-3 flex items-center space-x-2 text-secondary-700">
+                    <Sparkles className="w-5 h-5 text-secondary-600" />
+                    <span>Socratic Questions</span>
+                  </h3>
+                  <p className="text-gray-700 leading-relaxed italic">
+                    {analysis.socraticQuestion}
+                  </p>
                 </div>
-
-                <div className="flex space-x-2">
-                  <input
-                    type="text"
-                    value={chatInput}
-                    onChange={(e) => setChatInput(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    placeholder="Share your thoughts..."
-                    className="input-field flex-1"
-                  />
-                  <button
-                    onClick={handleSendMessage}
-                    disabled={!chatInput.trim()}
-                    className="btn-primary flex items-center space-x-2"
-                  >
-                    <Send className="w-4 h-4" />
-                    <span>Send</span>
-                  </button>
-                </div>
-              </div>
+              )}
             </div>
           )}
 

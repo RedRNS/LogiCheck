@@ -23,10 +23,12 @@ const Layout = ({ children }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-3 group">
-              <div className="bg-gradient-to-br from-primary-500 to-secondary-500 p-2 rounded-lg group-hover:scale-110 transition-transform">
-                <Brain className="w-6 h-6 text-white" />
-              </div>
+            <Link to="/" className="flex items-center space-x-2 group">
+              <img 
+                src="/Logo Logicheck Kotak.png" 
+                alt="LogiCheck Logo" 
+                className="w-12 h-12 group-hover:scale-110 transition-transform"
+              />
               <span className="text-xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
                 LogiCheck
               </span>

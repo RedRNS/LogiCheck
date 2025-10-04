@@ -47,13 +47,15 @@ const HomePage = () => {
   return (
     <div className="space-y-16">
       {/* Hero Section */}
-      <section className="text-center py-12 px-4">
-        <div className="inline-block mb-6">
-          <div className="bg-gradient-to-br from-primary-500 to-secondary-500 p-4 rounded-2xl shadow-lg">
-            <Brain className="w-16 h-16 text-white" />
-          </div>
+      <section className="text-center py-4 px-4">
+        <div className="inline-block">
+          <img 
+            src="/Logo Logicheck Kotak.png" 
+            alt="LogiCheck Logo" 
+            className="w-48 h-48 mx-auto"
+          />
         </div>
-        <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
+        <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent leading-tight pb-2">
           Welcome to LogiCheck
         </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">

@@ -1,21 +1,32 @@
 import { useState, useEffect } from 'react';
-import { Sword, Trophy, Target, CheckCircle, XCircle } from 'lucide-react';
-import { getSparringChallenge, verifySparringAnswer } from '../api/api';
+import { Sword, Trophy, Target, CheckCircle, XCircle, RefreshCw, Send } from 'lucide-react';
+import { getSparringChallenge, verifySparringAnswer, getBiasChallenge, analyzeBiasHighlights } from '../api/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import Alert from '../components/Alert';
+import BiasHighlighter from '../components/BiasHighlighter';
+import BiasFeedback from '../components/BiasFeedback';
 
 const DojoPage = () => {
   const [activeModule, setActiveModule] = useState('sparring'); // 'sparring' or 'bias'
   const [challenge, setChallenge] = useState(null);
+  const [biasChallenge, setBiasChallenge] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [feedback, setFeedback] = useState(null);
   const [stats, setStats] = useState({ total: 0, correct: 0 });
+  
+  // Bias challenge state
+  const [articleAHighlights, setArticleAHighlights] = useState([]);
+  const [articleBHighlights, setArticleBHighlights] = useState([]);
+  const [biasFeedback, setBiasFeedback] = useState(null);
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
 
   useEffect(() => {
     if (activeModule === 'sparring') {
       loadNewChallenge();
+    } else if (activeModule === 'bias') {
+      loadBiasChallenge();
     }
   }, [activeModule]);
 
@@ -32,6 +43,48 @@ const DojoPage = () => {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadBiasChallenge = async () => {
+    setLoading(true);
+    setError(null);
+    setArticleAHighlights([]);
+    setArticleBHighlights([]);
+    setBiasFeedback(null);
+
+    try {
+      const data = await getBiasChallenge();
+      setBiasChallenge(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmitBiasAnalysis = async () => {
+    if (articleAHighlights.length === 0 && articleBHighlights.length === 0) {
+      setError('Please highlight some text in both articles before submitting.');
+      return;
+    }
+
+    setSubmittingFeedback(true);
+    setError(null);
+
+    try {
+      const feedbackData = await analyzeBiasHighlights({
+        challengeId: biasChallenge.challengeId,
+        articleAHighlights,
+        articleBHighlights,
+        topic: biasChallenge.topic
+      });
+      
+      setBiasFeedback(feedbackData);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSubmittingFeedback(false);
     }
   };
 
@@ -262,32 +315,125 @@ const DojoPage = () => {
         {/* Bias Blindspot Module */}
         {activeModule === 'bias' && (
           <div className="space-y-6">
-            <div className="flex items-center space-x-2 mb-4">
-              <Target className="w-6 h-6 text-purple-600" />
-              <h2 className="text-2xl font-bold">Bias Blindspot Challenge</h2>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Target className="w-6 h-6 text-purple-600" />
+                <h2 className="text-2xl font-bold">Bias Blindspot Challenge</h2>
+              </div>
+              {biasChallenge && !loading && (
+                <button
+                  onClick={loadBiasChallenge}
+                  className="btn-secondary text-sm flex items-center space-x-2"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  <span>New Topic</span>
+                </button>
+              )}
             </div>
 
-            <Alert
-              type="info"
-              message="This feature is coming soon! You'll be able to compare articles from different perspectives and identify biased language."
-            />
+            {loading && !biasChallenge && <LoadingSpinner text="Loading challenge..." />}
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="bg-blue-50 p-6 rounded-xl border-2 border-blue-200">
-                <h3 className="font-semibold mb-2 text-blue-900">Article A</h3>
-                <p className="text-sm text-blue-700">
-                  Compare two articles on the same topic from different perspectives. 
-                  Highlight loaded language, emotional appeals, and biased framing.
-                </p>
+            {biasChallenge && !loading && (
+              <div className="space-y-4">
+                {/* Topic and Instructions */}
+                <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl border-l-4 border-l-purple-500">
+                  <h3 className="font-bold text-lg mb-2 text-purple-900">
+                    Topic: {biasChallenge.topic}
+                  </h3>
+                  <p className="text-sm text-gray-700">
+                    {biasChallenge.instructions}
+                  </p>
+                </div>
+
+                {/* Legend */}
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="font-semibold text-sm mb-2 text-gray-700">Bias Categories:</p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 bg-red-100 border-2 border-red-500 rounded"></div>
+                      <span><strong>Loaded Language:</strong> Words with strong connotations</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 bg-orange-100 border-2 border-orange-500 rounded"></div>
+                      <span><strong>Emotional Appeals:</strong> Appeals to emotion over logic</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 bg-purple-100 border-2 border-purple-500 rounded"></div>
+                      <span><strong>Biased Framing:</strong> Selective presentation</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Side-by-side Articles */}
+                <div className="grid md:grid-cols-2 gap-4">
+                  {/* Article A */}
+                  <div className="border-2 border-blue-300 rounded-xl overflow-hidden shadow-lg bg-white h-[600px]">
+                    <BiasHighlighter
+                      content={biasChallenge.articleA.content}
+                      title={biasChallenge.articleA.title}
+                      source={biasChallenge.articleA.source}
+                      bias={biasChallenge.articleA.bias}
+                      side="A"
+                      onHighlightsChange={setArticleAHighlights}
+                    />
+                  </div>
+
+                  {/* Article B */}
+                  <div className="border-2 border-orange-300 rounded-xl overflow-hidden shadow-lg bg-white h-[600px]">
+                    <BiasHighlighter
+                      content={biasChallenge.articleB.content}
+                      title={biasChallenge.articleB.title}
+                      source={biasChallenge.articleB.source}
+                      bias={biasChallenge.articleB.bias}
+                      side="B"
+                      onHighlightsChange={setArticleBHighlights}
+                    />
+                  </div>
+                </div>
+
+                {/* Submit Button */}
+                <div className="flex justify-center">
+                  <button
+                    onClick={handleSubmitBiasAnalysis}
+                    disabled={submittingFeedback || (articleAHighlights.length === 0 && articleBHighlights.length === 0)}
+                    className={`btn-primary flex items-center space-x-2 px-8 py-3 text-lg ${
+                      (articleAHighlights.length === 0 && articleBHighlights.length === 0) ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+                  >
+                    {submittingFeedback ? (
+                      <>
+                        <LoadingSpinner />
+                        <span>Analyzing...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-5 h-5" />
+                        <span>Get Feedback on My Analysis</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Reflection Prompt */}
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-xl border-l-4 border-l-blue-500">
+                  <h4 className="font-semibold mb-2 text-blue-900">Reflection Questions:</h4>
+                  <ul className="text-sm text-gray-700 space-y-1 list-disc list-inside">
+                    <li>What patterns of bias did you notice in each article?</li>
+                    <li>How does each source frame the issue differently?</li>
+                    <li>Which specific words or phrases reveal the author's perspective?</li>
+                    <li>How might a neutral presentation of this topic differ from both articles?</li>
+                  </ul>
+                </div>
               </div>
-              <div className="bg-orange-50 p-6 rounded-xl border-2 border-orange-200">
-                <h3 className="font-semibold mb-2 text-orange-900">Article B</h3>
-                <p className="text-sm text-orange-700">
-                  Use highlighting tools to identify bias patterns. 
-                  Learn how perspective shapes narrative and argumentation.
-                </p>
-              </div>
-            </div>
+            )}
+
+            {/* Feedback Modal */}
+            {biasFeedback && (
+              <BiasFeedback
+                feedback={biasFeedback}
+                onClose={() => setBiasFeedback(null)}
+              />
+            )}
           </div>
         )}
       </div>
